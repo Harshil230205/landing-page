@@ -349,7 +349,7 @@ function App() {
 
             {/* ----------------------------------  grid-9  -------------------------------------------------------------contact */}
             <div 
-               data-cursor="Connect Us  "
+               data-cursor="click me"
               data-cursor-bg="#7a57db"
               data-cursor-fg="#ffffff"
                 data-cursor-tail="#7a57db"
