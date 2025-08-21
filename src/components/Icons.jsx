@@ -1244,7 +1244,7 @@ export function WorldMap({
 
   return (
     <div
-      className={`w-full aspect-[2/1] ${theme === "dark" ? shadow : "bg-white"} rounded-lg relative font-sans`}>
+      className={`w-full md:aspect-[2/1] aspect-[3/2] ${theme === "dark" ? shadow : "bg-white"} rounded-lg relative font-sans`}>
       <img
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
         className="h-full w-full pointer-events-none select-none"

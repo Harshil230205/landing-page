@@ -58,6 +58,10 @@ body {
   overflow-x: hidden;
 }
 
+.page-padding {
+  @apply px-4 md:px-6;
+}
+
 .c-space {
   @apply sm:px-10 px-5 lg:px-15;
 }
@@ -71,7 +75,7 @@ body {
 }
 
 .text-heading {
-  @apply font-bold text-3xl md:text-4xl;
+  @apply font-bold text-2xl md:text-4xl;
 }
 
 .headtext {
@@ -101,31 +105,32 @@ body {
 
 /* About Section */
 .grid-1 {
-  @apply row-span-4 md:col-span-2 h-[20rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
+  @apply col-span-2 row-span-4 md:col-span-2 h-[12rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
 .grid-2 {
-  @apply row-span-1 md:col-span-2 h-[20rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
+  @apply col-span-2 row-span-1 md:col-span-2 h-auto md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
 .grid-3 {
-  @apply row-span-3 md:col-span-1 h-[20rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
+  @apply row-span-3 md:col-span-1 h-[10rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
 .grid-4 {
-  @apply row-span-3 md:col-span-1 h-[20rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
+  @apply row-span-3 md:col-span-1 h-[10rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
 .grid-5 {
-  @apply row-span-3 md:col-span-1 h-[20rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
+  @apply row-span-3 md:col-span-1 h-[10rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
 .grid-6 {
-  @apply row-span-3 md:col-span-2 h-[20rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
+  @apply row-span-3 md:col-span-2 h-[10rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
 .grid-7 {
-  @apply row-span-3 md:col-span-1 h-[20rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
+  @apply row-span-3 md:col-span-1 h-[10rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
 .grid-8 {
-  @apply row-span-3 md:col-span-2 h-[20rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
+  @apply row-span-3 md:col-span-2 h-[10rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
+/* Contact CTA grid item height tuned for mobile */
 .grid-9 {
-  @apply row-span-3 md:col-span-2 h-[20rem] md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
+  @apply col-span-2 row-span-1 md:row-span-3 md:col-span-2 h-auto md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
 
 .grid-default-color {
