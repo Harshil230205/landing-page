@@ -67,7 +67,7 @@ function App() {
   }, []);
 
   const openTwitter = useCallback(() => {
-    window.open("https://x.com/", "_blank", "noopener,noreferrer");
+    window.open("https://x.com/HK_2302  ", "_blank", "noopener,noreferrer");
   }, []);
 
   const openInstagram = useCallback(() => {
@@ -179,7 +179,7 @@ function App() {
                 loading="lazy"
               />
               <WaypointsIcon
-                size={32}
+                size={40}
                 className="p-full text-[#dfdfdf] w-[100%] h-[60%] flex items-center justify-center md:scale-100 scale-75"
               />
               <div className="flex flex-col gap-1 md:gap-2 mt-2 md:mt-3">
@@ -207,7 +207,7 @@ function App() {
                 loading="lazy"
               />
               <BlocksIcon
-                size={32}
+                size={40}
                 className="p-full text-[#dfdfdf] w-[100%] h-[60%] flex items-center justify-center md:scale-100 scale-75"
               />
               <div className="flex flex-col gap-1 md:gap-2 mt-2 md:mt-3">
@@ -237,7 +237,7 @@ function App() {
                 loading="lazy"
               />
               <DownloadIcon
-                size={32}
+                size={40}
                 className="p-full text-[#dfdfdf] w-[100%] h-[60%] flex items-center justify-center md:scale-100 scale-75"
               />
               <div className="flex flex-col gap-1 md:gap-2 mt-2 md:mt-3">
@@ -265,7 +265,7 @@ function App() {
                 loading="lazy"
               />
               <UserIcon
-                size={32}
+                size={40}
                 className="p-full text-[#dfdfdf] w-[100%] h-[60%] flex items-center justify-center md:scale-100 scale-75"
               />
               <div className="flex flex-col gap-1 md:gap-2 mt-2 md:mt-3">
@@ -288,25 +288,25 @@ function App() {
               />
               <div className="p-full w-[100%] h-[60%] flex flex-row justify-center text-center pt-3 md:pt-7">
                 <LinkedinIcon
-                  size={28}
+                  size={40}
                   className="p-full text-[#dfdfdf] w-[100%] h-[60%] flex items-center justify-center hover:text-blue-400 transition-colors duration-200 md:scale-100 scale-75 cursor-pointer"
                   onClick={openLinkedIn}
                   aria-label="Open LinkedIn profile"
                 />
                 <GithubIcon
-                  size={28}
+                  size={40}
                   className="p-full text-[#dfdfdf] w-[100%] h-[60%] flex items-center justify-center hover:text-gray-400 transition-colors duration-200 md:scale-100 scale-75 cursor-pointer"
                   onClick={openGithub}
                   aria-label="Open GitHub profile"
                 />
                 <TwitterIcon
-                  size={28}
+                  size={40}
                   className="p-full text-[#dfdfdf] w-[100%] h-[60%] flex items-center justify-center hover:text-blue-400 transition-colors duration-200 md:scale-100 scale-75 cursor-pointer"
                   onClick={openTwitter}
                   aria-label="Open X (Twitter) profile"
                 />
                 <InstagramIcon
-                  size={28}
+                  size={40}
                   className="p-full text-[#dfdfdf] w-[100%] h-[60%] flex items-center justify-center hover:text-pink-400 transition-colors duration-200 md:scale-100 scale-75 cursor-pointer"
                   onClick={openInstagram}
                   aria-label="Open Instagram profile"
