@@ -8,9 +8,9 @@ import {
   TwitterIcon,
   DownloadIcon,
   UserIcon,
-  SmoothCursor,
   WorldMap,
   AirplaneIcon,
+  SmoothCursor,
 } from "./components/Icons.jsx";
 import AboutCard from "./components/AboutCard.jsx";
 import SkillsCard from "./components/SkillsCard.jsx";
@@ -107,7 +107,7 @@ function App() {
 
   return (
     <>
-      <SmoothCursor />
+    <SmoothCursor/>
       <div className="mx-auto max-w-7xl my-auto page-padding">
         <section className="text-heading section-spacing" id="about">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:auto-rows-[4.5rem]">
@@ -125,6 +125,9 @@ function App() {
                   className="rounded-tl-[20%] rounded-br-[20%] rounded-tr-[20%] rounded-bl-[20%] h-full center object-cover"
                   alt="my Image"
                   loading="eager"
+                  decoding="async"
+                  width="512"
+                  height="512"
                 />
               </div>
               <div className="w-[60%] md:w-[50%] flex flex-col gap-2 md:gap-3 m-auto p-3 md:p-5">

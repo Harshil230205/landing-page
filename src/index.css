@@ -133,6 +133,22 @@ body {
   @apply col-span-2 row-span-1 md:row-span-3 md:col-span-2 h-auto md:h-full relative overflow-hidden hover:-translate-y-1 duration-200;
 }
 
+/* Custom animations for modals */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+
 .grid-default-color {
   @apply bg-gradient-to-br from-storm to-indigo rounded-4xl;
 }

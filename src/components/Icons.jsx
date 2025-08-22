@@ -297,6 +297,14 @@ const DefaultCursorSVG = () => {
   );
 };
 
+// Fallback-friendly requestIdleCallback wrapper to defer non-critical work
+const requestIdle = (cb) => {
+  if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+    return window.requestIdleCallback(cb);
+  }
+  return setTimeout(cb, 0);
+};
+
 const SPEED_LINES = [
   { x1: 5, y1: 15, x2: 1, y2: 19, delay: 0.1 },
   { x1: 7, y1: 17, x2: 3, y2: 21, delay: 0.2 },
@@ -977,6 +985,7 @@ export const SmoothCursor = ({
     restDelta: 0.001,
   },}
 ) =>{
+  const [enabled, setEnabled] = useState(true); // Enable cursor
   const [isMoving, setIsMoving] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [hintText, setHintText] = useState("Click me");
@@ -1006,7 +1015,14 @@ export const SmoothCursor = ({
     damping: 35,
   });
 
+  // Enable cursor immediately
   useEffect(() => {
+    setEnabled(true);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
+    
     const updateVelocity = (currentPos) => {
       const currentTime = Date.now();
       const deltaTime = currentTime - lastUpdateTime.current;
@@ -1067,19 +1083,60 @@ export const SmoothCursor = ({
       });
     };
 
+    // Completely hide default cursor everywhere
     document.body.style.cursor = "none";
+    document.documentElement.style.cursor = "none";
+    
+    // Hide cursor on all elements
+    const hideCursorOnElement = (element) => {
+      if (element && element.style) {
+        element.style.cursor = "none";
+      }
+    };
+
+    // Hide cursor on all existing elements
+    const allElements = document.querySelectorAll('*');
+    allElements.forEach(hideCursorOnElement);
+
+    // Observer to hide cursor on new elements
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) { // Element node
+            hideCursorOnElement(node);
+            const childElements = node.querySelectorAll('*');
+            childElements.forEach(hideCursorOnElement);
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
     window.addEventListener("mousemove", throttledMouseMove);
     const handlePointerOver = (e) => {
+      // Always hide default cursor
+      if (e.target && e.target.style) {
+        e.target.style.cursor = "none";
+      }
+      
       const hideEl = e.target.closest('[data-values]');
       if (hideEl) {
         setShowHint(false);
         setHideCursor(true);
-        document.body.style.cursor = 'auto';
+        // Still hide default cursor
+        if (hideEl.style) hideEl.style.cursor = "none";
         return;
       }
 
       setHideCursor(false);
-      document.body.style.cursor = 'none';
+      // Ensure cursor is hidden
+      if (e.target && e.target.style) {
+        e.target.style.cursor = "none";
+      }
 
       const el = e.target.closest('[data-cursor]');
       if (el) {
@@ -1106,12 +1163,15 @@ export const SmoothCursor = ({
     return () => {
       window.removeEventListener("mousemove", throttledMouseMove);
       document.body.style.cursor = "auto";
+      document.documentElement.style.cursor = "auto";
       if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener("mouseover", handlePointerOver);
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      observer.disconnect();
     };
-  }, [cursorX, cursorY, rotation, scale]);
+  }, [cursorX, cursorY, rotation, scale, enabled]);
 
+  // Show smooth cursor
   return (
     <motion.div
       style={{
@@ -1125,19 +1185,19 @@ export const SmoothCursor = ({
         willChange: "transform",
       }}
       initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
+      animate={{ scale: enabled ? 1 : 0 }}
       transition={{
         type: "spring",
         stiffness: 400,
         damping: 30,
       }}
     >
-      {!hideCursor && (
+      {enabled && !hideCursor && (
         <motion.div style={{ rotate: rotation, scale: scale }}>
           {cursor}
         </motion.div>
       )}
-      {showHint && !hideCursor && (
+      {enabled && showHint && !hideCursor && (
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: -20 }}
           animate={{ opacity: 1, scale: 1, y: -24 }}
@@ -1214,18 +1274,29 @@ export function WorldMap({
   lineColor = "#7a57da"
 }) {
   const svgRef = useRef(null);
-  const map = new DottedMap({ height: 100, grid: "diagonal" });
-
   const { theme } = useTheme();
-  
+  const [svgMap, setSvgMap] = useState(null);
+
   const shadow = "bg-gradient-to-br from-[#0f0f0f] to-[#1f1f1f]rounded-4xl";
-  
-  const svgMap = map.getSVG({
-    radius: 0.22,
-    color: theme === "dark" ? "#FFFFFF40" : "#00000040",
-    shape: "circle",
-    backgroundColor: "transparent",
-  });
+
+  useEffect(() => {
+    let cancelled = false;
+    const id = requestIdle(() => {
+      if (cancelled) return;
+      const map = new DottedMap({ height: 100, grid: "diagonal" });
+      const generated = map.getSVG({
+        radius: 0.22,
+        color: theme === "dark" ? "#FFFFFF40" : "#00000040",
+        shape: "circle",
+        backgroundColor: "transparent",
+      });
+      if (!cancelled) setSvgMap(generated);
+    });
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+    };
+  }, [theme]);
 
   const projectPoint = (lat, lng) => {
     const x = (lng + 180) * (800 / 360);
@@ -1245,13 +1316,19 @@ export function WorldMap({
   return (
     <div
       className={`w-full md:aspect-[2/1] aspect-[3/2] ${theme === "dark" ? shadow : "bg-white"} rounded-lg relative font-sans`}>
-      <img
-        src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
-        className="h-full w-full pointer-events-none select-none"
-        alt="world map"
-        height="495"
-        width="1056"
-        draggable={false} />
+      {svgMap ? (
+        <img
+          src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
+          className="h-full w-full pointer-events-none select-none"
+          alt="world map"
+          height="495"
+          width="1056"
+          draggable={false}
+          decoding="async"
+        />
+      ) : (
+        <div className="h-full w-full pointer-events-none select-none" />
+      )}
       <svg
         ref={svgRef}
         viewBox="0 0 800 400"

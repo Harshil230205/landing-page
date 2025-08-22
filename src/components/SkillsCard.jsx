@@ -1,14 +1,13 @@
-import { motion } from "motion/react";
 import { XIcon } from "./Icons";
 
 const SkillsCard = ({ closeModal }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full overflow-hidden backdrop-blur-md bg-black/50">
-      <motion.div
-        className="relative max-w-4xl w-full mx-4 border shadow-2xl rounded-3xl grid-default-color border-white/20 bg-gradient-to-br from-gray-900/95 to-gray-800/95 max-h-[90vh] overflow-y-auto"
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: "easeOut" }}
+      <div
+        className="relative max-w-4xl w-full mx-4 border shadow-2xl rounded-3xl grid-default-color border-white/20 bg-gradient-to-br from-gray-900/95 to-gray-800/95 max-h-[90vh] overflow-y-auto animate-fadeIn"
+        style={{
+          animation: 'fadeIn 0.2s ease-out'
+        }}
       >
         {/* Close Button */}
         <button
@@ -78,7 +77,7 @@ const SkillsCard = ({ closeModal }) => {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
