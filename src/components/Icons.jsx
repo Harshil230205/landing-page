@@ -985,7 +985,7 @@ export const SmoothCursor = ({
     restDelta: 0.001,
   },}
 ) =>{
-  const [enabled, setEnabled] = useState(true); // Enable cursor
+  const [enabled, setEnabled] = useState(false); // Start disabled
   const [isMoving, setIsMoving] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [hintText, setHintText] = useState("Click me");
@@ -1015,10 +1015,39 @@ export const SmoothCursor = ({
     damping: 35,
   });
 
-  // Enable cursor immediately
+  // Check screen size and only enable cursor on larger screens (desktop)
   useEffect(() => {
-    setEnabled(true);
-  }, []);
+    const checkScreenSize = () => {
+      // Only enable cursor on screens wider than 1024px (lg breakpoint)
+      // This excludes tablets (768px-1024px) and phones (<768px)
+      const wasEnabled = enabled;
+      const isDesktop = window.innerWidth > 1024;
+      setEnabled(isDesktop);
+      
+      // If cursor was enabled but now disabled (resized to smaller screen), restore default cursor
+      if (wasEnabled && !isDesktop) {
+        document.body.style.cursor = "auto";
+        document.documentElement.style.cursor = "auto";
+        // Restore cursor on all elements
+        const allElements = document.querySelectorAll('*');
+        allElements.forEach((element) => {
+          if (element && element.style) {
+            element.style.cursor = "auto";
+          }
+        });
+      }
+    };
+
+    // Check initially
+    checkScreenSize();
+
+    // Listen for window resize
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+    };
+  }, [enabled]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -1083,38 +1112,41 @@ export const SmoothCursor = ({
       });
     };
 
-    // Completely hide default cursor everywhere
-    document.body.style.cursor = "none";
-    document.documentElement.style.cursor = "none";
-    
-    // Hide cursor on all elements
-    const hideCursorOnElement = (element) => {
-      if (element && element.style) {
-        element.style.cursor = "none";
-      }
-    };
+    // Only hide default cursor when smooth cursor is enabled
+    let observer = null;
+    if (enabled) {
+      document.body.style.cursor = "none";
+      document.documentElement.style.cursor = "none";
+      
+      // Hide cursor on all elements
+      const hideCursorOnElement = (element) => {
+        if (element && element.style) {
+          element.style.cursor = "none";
+        }
+      };
 
-    // Hide cursor on all existing elements
-    const allElements = document.querySelectorAll('*');
-    allElements.forEach(hideCursorOnElement);
+      // Hide cursor on all existing elements
+      const allElements = document.querySelectorAll('*');
+      allElements.forEach(hideCursorOnElement);
 
-    // Observer to hide cursor on new elements
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === 1) { // Element node
-            hideCursorOnElement(node);
-            const childElements = node.querySelectorAll('*');
-            childElements.forEach(hideCursorOnElement);
-          }
+      // Observer to hide cursor on new elements
+      observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1) { // Element node
+              hideCursorOnElement(node);
+              const childElements = node.querySelectorAll('*');
+              childElements.forEach(hideCursorOnElement);
+            }
+          });
         });
       });
-    });
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    }
 
     window.addEventListener("mousemove", throttledMouseMove);
     const handlePointerOver = (e) => {
@@ -1162,12 +1194,16 @@ export const SmoothCursor = ({
 
     return () => {
       window.removeEventListener("mousemove", throttledMouseMove);
+      // Restore default cursor when component unmounts
       document.body.style.cursor = "auto";
       document.documentElement.style.cursor = "auto";
       if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener("mouseover", handlePointerOver);
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-      observer.disconnect();
+      // Only disconnect observer if it was created
+      if (enabled) {
+        observer.disconnect();
+      }
     };
   }, [cursorX, cursorY, rotation, scale, enabled]);
 
